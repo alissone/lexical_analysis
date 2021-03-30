@@ -115,17 +115,29 @@ def normalize_case(s: str) -> str:
 
 
 def tokenize(text):
+    # text preprocessing to remove unwanted characters
     text = normalize_accents(text)
     text = normalize_case(text)
+
+    # counters to aid debugging syntax errors
+    line_start = 0
+    line = 0
     pos = 0
+
     while True:
         m = token_re.match(text, pos)
-        if not m:
+        if not m:  # exit loop when there is no character left
             break
         pos = m.end()
-        token_name = m.lastgroup
-        token_value = m.group(token_name)
-        yield token_name, token_value
+        token_name = m.lastgroup  # group name from regex `token_pattern`
+
+        if token_name == "newline":
+            line_start = pos
+            line += 1
+
+        token_value = m.group(token_name) # group content with the current group name
+        yield Token(typ=token_name, val=token_value, lin=line, col=pos)
+
     if pos != len(text):
         raise TokenizerException(
             f"Exception when parsing the character 🡆 {text[pos]} 🡄 at pos {pos}/{len(text)} of {text}"
