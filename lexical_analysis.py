@@ -1,8 +1,33 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+__author__ = "Alisson Amorim @ github.com/alissone/"
+__copyright__ = "Copyright 2021"
+__license__ = "GPL"
+__version__ = "1.0.0"
+__email__ = "alissond@acad.ifma.edu.br"
+__status__ = "Work in progress"
+
 import re
 import unicodedata
+from dataclasses import dataclass
+
+"""
+This is a lexical analysis program of Portugol language
+The tokenizer was inspired by `re` documentation, where 
+"""
+
+
+@dataclass
+class Token:
+    """Class to represent token data"""
+    typ: str
+    val: str
+    lin: int
+    col: int
+
 
 reserved_words = [
-
     "E",
     "VETOR",
     "INICIO",
@@ -30,6 +55,13 @@ reserved_words = [
     "ENQUANTO"
 ]
 
+{
+    "typ": "asd",
+    "value": "asd",
+    "line": "asd",
+    "column": "asd"
+}
+
 token_pattern = r"""
 (?P<identifier>[a-zA-Z_][a-zA-Z0-9_]*)
 |(?P<newline>\n)
@@ -56,13 +88,15 @@ token_pattern = r"""
 |(?P<menos>-)
 |(?P<mul>\*)
 |(?P<soma>\+)
-# |(?P<desconhecido>.)
+|(?P<desconhecido>.)
 """
 
 token_re = re.compile(token_pattern, re.VERBOSE)
 
+
 class TokenizerException(Exception):
     pass
+
 
 def normalize_accents(s: str) -> str:
     """
@@ -70,13 +104,15 @@ def normalize_accents(s: str) -> str:
     em ascii. Exemplo: 'Açafrão' se torna 'Acafrao'.
     """
     return ''.join(c for c in unicodedata.normalize('NFD', s)
-                  if unicodedata.category(c) != 'Mn')
+                   if unicodedata.category(c) != 'Mn')
 
-def normalize_case(s:str) -> str:
+
+def normalize_case(s: str) -> str:
     """Substitui letras maiusculas e minusculas por apenas minusculas,
     pois a capitalização será ignorada pelo programa.
     """
     return s.lower()
+
 
 def tokenize(text):
     text = normalize_accents(text)
