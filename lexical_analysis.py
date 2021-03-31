@@ -55,13 +55,6 @@ reserved_words = [
     "ENQUANTO"
 ]
 
-{
-    "typ": "asd",
-    "value": "asd",
-    "line": "asd",
-    "column": "asd"
-}
-
 token_pattern = r"""
 (?P<identifier>[a-zA-Z_][a-zA-Z0-9_]*)
 |(?P<newline>\n)
@@ -101,7 +94,9 @@ class TokenizerException(Exception):
 def normalize_accents(s: str) -> str:
     """
     Substitui letras com acentos por seus caracters mais próximos
-    em ascii. Exemplo: 'Açafrão' se torna 'Acafrao'.
+    em ascii. 
+
+    Exemplo: 'Açafrão' 🡆 'Acafrao'.
     """
     return ''.join(c for c in unicodedata.normalize('NFD', s)
                    if unicodedata.category(c) != 'Mn')
@@ -110,6 +105,8 @@ def normalize_accents(s: str) -> str:
 def normalize_case(s: str) -> str:
     """Substitui letras maiusculas e minusculas por apenas minusculas,
     pois a capitalização será ignorada pelo programa.
+
+    Exemplo: 'MatLAB' 🡆 'matlab'
     """
     return s.lower()
 
@@ -135,7 +132,8 @@ def tokenize(text):
             line_start = pos
             line += 1
 
-        token_value = m.group(token_name) # group content with the current group name
+        # group content with the current group name
+        token_value = m.group(token_name)
         yield Token(typ=token_name, val=token_value, lin=line, col=pos)
 
     if pos != len(text):
