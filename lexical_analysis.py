@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import argparse
 __author__ = "Alisson Amorim @ github.com/alissone/"
 __copyright__ = "Copyright 2021"
 __license__ = "GPL"
@@ -123,7 +124,6 @@ def AnaliseLexica(text):
     text = normalize_case(text)
 
     # counters to aid debugging syntax errors
-    line_start = 0
     line = 0
     pos = 0
 
@@ -166,24 +166,35 @@ def AnaliseLexica(text):
         )
 
 
-# Testing
-texto1 = r'       se n2=0 entao // verifica divisão por zero'
-texto2 = r'''
-       caso "/"
-       se n2=0 entao // verifica divisao por zero comentario
-          escreva("       Erro! Divisao por zero, entre com um denominador diferente de 0")
-       senao
-          saida <- n1 / n2
-       fimse
-       @
+def main():
+    # Testing
+    texto1 = r'       se n2=0 entao // verifica divisão por zero'
+    texto2 = r'''
+        caso "/"
+        se n2=0 entao // verifica divisao por zero comentario
+            escreva("       Erro! Divisao por zero, entre com um denominador diferente de 0")
+        senao
+            saida <- n1 / n2
+        fimse
+        @
 
-fimescolha
-'''
+    fimescolha
+    '''
 
-print(' texto1 '.center(60, '='))
-for tok in AnaliseLexica(texto1):
-    print(tok)
+    print(' texto1 '.center(60, '='))
+    for tok in AnaliseLexica(texto1):
+        print(tok)
 
-print(' texto2 '.center(60, '='))
-for tok in AnaliseLexica(texto2):
-    print(tok)
+    print(' texto2 '.center(60, '='))
+    for tok in AnaliseLexica(texto2):
+        print(tok)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Adicione o caminho de um arquivo para ser lido")
+    parser.add_argument('--file', dest='filename', action='store_const',
+                        help='Caminho do arquivo a ser processado')
+
+    args = parser.parse_args()
+
+    main()
