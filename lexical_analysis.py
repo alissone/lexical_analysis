@@ -14,7 +14,7 @@ from dataclasses import dataclass
 
 """
 This is a lexical analysis program of Portugol language
-The tokenizer was inspired by `re` documentation, where 
+The tokenizer was inspired by `re` documentation, where
 """
 
 
@@ -28,36 +28,42 @@ class Token:
 
 
 reserved_words = [
-    "E",
-    "VETOR",
-    "INICIO",
-    "CASO",
-    "CONST",
-    "DIV",
-    "FAÇA",
-    "SENAO",
-    "FIM",
-    "PARA",
-    "FUNCAO",
-    "SE",
-    "MOD",
-    "NAO",
-    "DE",
-    "OU",
-    "PROCEDIMENTO",
-    "ALGORITMO",
-    "REGISTRO",
-    "REPITA",
-    "ENTAO",
-    "TIPO",
-    "ATE",
-    "VAR",
-    "ENQUANTO"
+    "e",
+    "vetor",
+    "inicio",
+    "caso",
+    "const",
+    "div",
+    "faça",
+    "senao",
+    "fim",
+    "para",
+    "funcao",
+    "se",
+    "mod",
+    "nao",
+    "de",
+    "ou",
+    "procedimento",
+    "algoritmo",
+    "registro",
+    "repita",
+    "entao",
+    "tipo",
+    "ate",
+    "var",
+    "enquanto"
 ]
+
+# we should check if a token is a reserved word. If not, it will be inserted in symbol_table
+symbol_table = {}
+
 
 token_pattern = r"""
 (?P<identifier>[a-zA-Z_][a-zA-Z0-9_]*)
 |(?P<newline>\n)
+|(?P<comment>\/\/.*)
+|(?P<string>\"(.*?)\")
 |(?P<whitespace>\s+)
 |(?P<inteiro>[0-9]+)
 |(?P<atribuicao><-)
@@ -94,7 +100,7 @@ class TokenizerException(Exception):
 def normalize_accents(s: str) -> str:
     """
     Substitui letras com acentos por seus caracters mais próximos
-    em ascii. 
+    em ascii.
 
     Exemplo: 'Açafrão' 🡆 'Acafrao'.
     """
@@ -111,7 +117,7 @@ def normalize_case(s: str) -> str:
     return s.lower()
 
 
-def tokenize(text):
+def AnaliseLexica(text):
     # text preprocessing to remove unwanted characters
     text = normalize_accents(text)
     text = normalize_case(text)
@@ -128,13 +134,31 @@ def tokenize(text):
         pos = m.end()
         token_name = m.lastgroup  # group name from regex `token_pattern`
 
+        if token_name == "comment":  # skip comments
+            continue
+
         if token_name == "newline":
             line_start = pos
             line += 1
 
         # group content with the current group name
         token_value = m.group(token_name)
-        yield Token(typ=token_name, val=token_value, lin=line, col=pos)
+
+        current_token = Token(
+            typ=token_name,
+            val=token_value,
+            lin=line,
+            col=pos,
+        )
+
+        # it should then be added into `symbol_table` if it doesn't exist yet
+        if token_name == "identifier":
+            if token_value not in reserved_words:
+                if token_value not in symbol_table:
+                    group = symbol_table.setdefault(token_value, [])
+                    group.append(current_token)
+
+        yield current_token
 
     if pos != len(text):
         raise TokenizerException(
@@ -146,20 +170,20 @@ def tokenize(text):
 texto1 = r'       se n2=0 entao // verifica divisão por zero'
 texto2 = r'''
        caso "/"
-       se n2=0 entao // verifica divisao por zero
+       se n2=0 entao // verifica divisao por zero comentario
           escreva("       Erro! Divisao por zero, entre com um denominador diferente de 0")
        senao
           saida <- n1 / n2
        fimse
        @
-      
+
 fimescolha
 '''
 
 print(' texto1 '.center(60, '='))
-for tok in tokenize(texto1):
+for tok in AnaliseLexica(texto1):
     print(tok)
 
 print(' texto2 '.center(60, '='))
-for tok in tokenize(texto2):
+for tok in AnaliseLexica(texto2):
     print(tok)
