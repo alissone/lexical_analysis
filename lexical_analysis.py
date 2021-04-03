@@ -167,32 +167,19 @@ def AnaliseLexica(text):
 
 
 def main():
-    # Testing
-    texto1 = r'       se n2=0 entao // verifica divisão por zero'
-    texto2 = r'''
-        caso "/"
-        se n2=0 entao // verifica divisao por zero comentario
-            escreva("       Erro! Divisao por zero, entre com um denominador diferente de 0")
-        senao
-            saida <- n1 / n2
-        fimse
-        @
-
-    fimescolha
-    '''
-
-    print(' texto1 '.center(60, '='))
-    for tok in AnaliseLexica(texto1):
-        print(tok)
-
-    print(' texto2 '.center(60, '='))
-    for tok in AnaliseLexica(texto2):
-        print(tok)
+    filenames = args.filename.split(" ")
+    for filename in filenames:
+        print(f" {filename} ".center(60, "="))
+        with open(filename, "r") as file:
+            file_contents = '\n'.join(file.readlines())
+            for tok in AnaliseLexica(file_contents):
+                print(tok)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Adicione o caminho de um arquivo para ser lido")
-    parser.add_argument('--file', dest='filename', action='store_const',
+    parser = argparse.ArgumentParser(
+        description="Adicione o caminho de um arquivo para ser lido")
+    parser.add_argument('--file', dest='filename', action='store',
                         help='Caminho do arquivo a ser processado')
 
     args = parser.parse_args()
