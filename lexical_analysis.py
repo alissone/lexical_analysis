@@ -5,9 +5,9 @@ import argparse
 __author__ = "Alisson Amorim @ github.com/alissone/"
 __copyright__ = "Copyright 2021"
 __license__ = "GPL"
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 __email__ = "alissond@acad.ifma.edu.br"
-__status__ = "Work in progress"
+__status__ = "Ready to rock"
 
 import re
 import unicodedata
@@ -15,7 +15,9 @@ from dataclasses import dataclass
 
 """
 This is a lexical analysis program of Portugol language
-The tokenizer was inspired by `re` documentation, where
+The tokenizer was inspired by `re` documentation, and the
+rest of the code was built from scratch according to the
+proposed document.
 """
 
 
